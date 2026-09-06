@@ -12,6 +12,7 @@ typedef enum {
     CREATE,
     INTO,
     INT,
+    DROP,
     TEXT,
     COMMA,
     L_BRACK,
@@ -35,8 +36,8 @@ typedef struct DbLexerNode{
 // db_lexer APIs
 
 DbLexerNode* createDbLexerNode(DbLexerNodeType type);
-DbLexerNode* lexer_output;
-DbLexerNode* lexer_tail;
+extern DbLexerNode* lexer_output;
+extern DbLexerNode* lexer_tail;
 void line_lexer(char* line);
 
 #endif

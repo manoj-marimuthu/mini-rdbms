@@ -124,10 +124,26 @@ astNode* parseInsert(){
             log_error("Missing INTO keyword in INSERT statement",SYNTAX_ERROR);
             return NULL;
         }
-    }else{
-        return NULL;
     }
     return NULL;
+}
+
+astNode* parseDrop(){
+	if(current && current->type == DROP){
+		consume();
+		if(current && current->type == IDENTIFIER){
+			char* tableName = current->data.strData;
+			consume();
+			consumeColon();
+			astNode* node = createAstNode(AST_DROP);
+			node->data.strData = tableName;
+			return node;
+		}else{
+			log_error("Missing Table Name in DROP statement",SYNTAX_ERROR);
+			return NULL;
+		}
+	}
+	return NULL;
 }
 
 astNode* parseCreate(){
@@ -226,6 +242,8 @@ astNode* parseStatement(){
                 return parseCreate();
             case DESCRIBE:
                 return parseDescribe();
+	    case DROP:
+		return parseDrop();
             default:
                 log_error("Unknown statement type found",RUNTIME_ERROR);
                 break;

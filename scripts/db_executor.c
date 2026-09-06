@@ -22,6 +22,7 @@ void print_line_break(int col_count){
     line_break[j+1] = '\0';
     printf("%s",line_break);
 }
+
 Column* createColumn(ColumnType type){
     DbMemNode* colObj = createMemNode(sizeof(Column));
     Column* col = colObj->ptr;
@@ -129,6 +130,15 @@ void execute(astNode* node){
             fclose(table_file);
             break;
         }
+	case AST_DROP:{		
+            char table_name[strlen(node->data.strData) + 5];
+            strcpy(table_name,node->data.strData);
+            strcat(table_name,".tbl");
+            if(remove(table_name) != 0){
+		log_error("Failed to DROP table",RUNTIME_ERROR);
+	    }
+	    break;
+	}
         case AST_SELECT:{
             char table_name[strlen(node->data.strData) + 5];
             strcpy(table_name,node->data.strData);
@@ -141,7 +151,7 @@ void execute(astNode* node){
             int col_count;
             fread(&col_count,int_size,1,table_file);
             Column col;
-            
+            print_line_break(col_count);
             for(int i =0;i < col_count;i++){
                 fread(&col,column_struct_size,1,table_file);
                 printf("|%-32s",col.col_name);
@@ -188,7 +198,7 @@ void execute(astNode* node){
                 fread(&col,column_struct_size,1,table_file);
                 printf("|%-32s",col.col_name);
                 printf("|%-32s",col.type == TEXT_COL ? "TEXT" : "INT");
-                printf("|%-32d|\n",col.col_size);
+                printf("|%-32zu|\n",col.col_size);
             }
             print_line_break(3);
             break;

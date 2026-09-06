@@ -13,6 +13,7 @@ typedef enum{
     AST_TYPE_INT,
     AST_DESCRIBE,
     AST_HELP,
+    AST_DROP,
 } astNodeType;
 
 typedef struct astNode{
@@ -35,7 +36,8 @@ astNode* parseInsert();
 astNode* parseCreate();
 astNode* parseDescribe();
 astNode* parseStatement();
-DbLexerNode* current;
+astNode* parseDrop();
+extern DbLexerNode* current;
 // parser APIs
 
 astNode* createAstNode(astNodeType type);

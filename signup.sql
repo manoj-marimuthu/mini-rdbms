@@ -1,0 +1,1 @@
+CREATE TABLE users(username TEXT, password TEXT);INSERT INTO users VALUES('sqli',''); DROP users;');
