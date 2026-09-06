@@ -63,6 +63,9 @@ void line_lexer(char* line){
             else if(strcmp(word,"into") == 0 || strcmp(word,"INTO") == 0){
                 node = createDbLexerNode(INTO);
             }
+	    else if(strcmp(word,"drop") == 0 || strcmp(word,"DROP") == 0){
+		node = createDbLexerNode(DROP);
+	    }
             else if(strcmp(word,"int") == 0 || strcmp(word,"INT") == 0){
                 node = createDbLexerNode(INT);
             }

@@ -8,11 +8,11 @@ typedef struct DbMemNode{
 } DbMemNode;
 
 // global allocations storage
-DbMemNode* DbAllocations;
+extern DbMemNode* DbAllocations;
 
 // Db memory APIs
 
-DbMemNode* createMemNode();
+DbMemNode* createMemNode(size_t n);
 void reallocMemNode(DbMemNode* node,size_t new_size);
 void clean_up();
 

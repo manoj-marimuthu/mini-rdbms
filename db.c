@@ -6,6 +6,7 @@
 #include <db_parser.h>
 #include <db_executor.h>
 #include <string.h>
+#include <ctype.h>
 #include <db_dot_command.h>
 
 void print_on_startup(){
@@ -13,7 +14,50 @@ void print_on_startup(){
     printf("Type .help for help \n");
 }
 
-int main(){
+static int is_comment(char* line){
+	int i =0;
+	int n = strlen(line);
+	while(isspace(line[i])) i++;
+	if(i + 2 < n && line[i] == '-' && line[i+1] == '-'){
+		return 1;
+	}
+	return 0;
+}
+void run_statement(char* line){
+        if(is_comment(line)) return;
+	line_lexer(line);
+        current = lexer_output;
+        astNode* statement_node = parseStatement();
+        execute(statement_node);
+        // reset
+        current = NULL;
+        lexer_output = NULL;
+        lexer_tail = NULL;
+}
+
+int main(int argc, char** argv){
+    if(argc > 1){
+	char* fileName = argv[1];
+	FILE* fptr = fopen(fileName,"rb");
+	if(!fptr){
+		log_error("Cannot access target query file",RUNTIME_ERROR);
+	}
+	char query[1024];
+	size_t query_len = 0;
+	int c;
+	while((c = fgetc(fptr)) != EOF){
+		if(query_len >= sizeof(query) - 1){
+			log_error("Query too large", RUNTIME_ERROR);
+		}
+		query[query_len++] = c;
+		if(c == ';'){
+			query[query_len] = '\0';
+			run_statement(query);
+			query_len = 0;
+		}
+	}
+	return 0;
+    }
     char line[1024];
     print_on_startup();
     while(1){
@@ -31,15 +75,7 @@ int main(){
             execute_dot_command(line);
             continue;
         }
-        // tokenize line
-        line_lexer(line);
-        current = lexer_output;
-        astNode* statement_node = parseStatement();
-        execute(statement_node);
-        // reset for REPL
-        current = NULL;
-        lexer_output = NULL;
-        lexer_tail = NULL;
+    	run_statement(line);
     }
     clean_up();
     return 0;

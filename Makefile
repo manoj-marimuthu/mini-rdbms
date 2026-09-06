@@ -1,4 +1,4 @@
-TARGET = db.exe
+TARGET = db
 COMMAND = gcc -Wall -g -Iinclude
 
 OBJ = build/db.o \
@@ -26,5 +26,5 @@ build/db_executor.o : scripts/db_executor.c
 build/db_dot_command.o : scripts/db_dot_command.c
 	$(COMMAND) -c scripts/db_dot_command.c -o build/db_dot_command.o
 clean:
-	del *.exe
-	del build\*.o
+	rm -f *.exe
+	rm -f build/*.o
